@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="328.0" prefWidth="680.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.ControllerSignUp">
+   <children>
+      <Pane minHeight="414.0" minWidth="680.0" prefHeight="414.0" prefWidth="680.0">
+         <children>
+            <TextField fx:id="txtUsername" layoutX="304.0" layoutY="165.0" />
+            <Label layoutX="226.0" layoutY="169.0" text="Username" />
+            <Label layoutX="226.0" layoutY="211.0" text="Password" />
+            <TextField fx:id="txtPassword" layoutX="304.0" layoutY="207.0" />
+            <Button fx:id="btnButton" layoutX="226.0" layoutY="274.0" mnemonicParsing="false" onAction="#handleBtnSendClick" prefHeight="25.0" prefWidth="227.0" text="Button" />
+            <Label layoutX="226.0" layoutY="127.0" text="Email" />
+            <TextField fx:id="txtEmail" layoutX="304.0" layoutY="123.0" />
+            <Label layoutX="226.0" layoutY="80.0" text="Last Name" />
+            <Label layoutX="226.0" layoutY="37.0" text="First Name" />
+            <TextField fx:id="txtFirstName" layoutX="304.0" layoutY="33.0" />
+            <TextField fx:id="txtLastName" layoutX="304.0" layoutY="76.0" />
+            <Label layoutX="226.0" layoutY="245.0" text="Gender" />
+            <RadioButton fx:id="radioMale" layoutX="304.0" layoutY="245.0" mnemonicParsing="false" text="Male" />
+            <RadioButton fx:id="radioFemale" layoutX="366.0" layoutY="245.0" mnemonicParsing="false" text="Female" />
+         </children>
+      </Pane>
+   </children>
+</HBox>

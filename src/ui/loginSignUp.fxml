@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<Pane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.ControllerLoginSignup">
+   <children>
+      <Button fx:id="btnSignup" layoutX="146.0" layoutY="188.0" mnemonicParsing="false" onAction="#signUpClick" text="Sign Up" />
+      <Button fx:id="btnLogin" layoutX="374.0" layoutY="188.0" mnemonicParsing="false" onAction="#loginClick" text="Login" />
+   </children>
+</Pane>
