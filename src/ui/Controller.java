@@ -39,6 +39,7 @@ public class Controller implements Initializable{
         this.chatMemberBox = new ListView<String>();
         this.btnSend.setText("Send");
         this.request = Request.getInstance();
+        this.im = new ChatClient();
     }
 
     public void setMain(Main main){
@@ -87,14 +88,27 @@ public class Controller implements Initializable{
 
     public void handleBtnSendClick(ActionEvent actionEvent) {
         System.out.println(chatTextInput.getText());
-        this.im.sendMessage(chatTextInput.getText());
-        chatWindow.appendText(chatTextInput.getText() + "\n");
+        this.im.sendMessage("Chat:" + chatTextInput.getText());
+        chatWindow.appendText("Me: -> " + chatTextInput.getText() + "\n");
         chatTextInput.clear();
+        this.listen();
+    }
+
+    private void listen(){
+
+        String[] stringPieces = im.displayMessage().split(":", 2);
+
+        if(stringPieces[0] == "Chat")
+            chatWindow.appendText("Server Response -> " + stringPieces[1].trim() + "\n");
+
+//        chatWindow.appendText("Server Response -> " + stringPieces[1].trim() + "\n");
+//        chatWindow.appendText("Server Response -> " + stringPieces[0].trim() + "\n");
+        System.out.println(stringPieces[0]);
     }
 
     private void threadSelector(){
         while (true){
-            switch (request.in()){
+            switch (request.getServerResponse()){
                 case "User Stack":
                     System.out.println("(Controller.java) Indentified the user stack");
                 break;

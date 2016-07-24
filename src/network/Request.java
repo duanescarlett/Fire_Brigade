@@ -4,26 +4,22 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 
 /**
  * Created by Duane on 04/07/2016.
  */
 public class Request {
 
-    String serverName = "127.0.0.1";
-    Socket client;
-    ObjectOutputStream oOutput;
-    ObjectInputStream oInput;
+    private String serverName = "127.0.0.1";
+    private Socket client;
+    private ObjectOutputStream oOutput;
+    private ObjectInputStream oInput;
+    private String inComingFromServer = "";
 
     private static class SingletonHolder {
         private static final Request INSTANCE = new Request();
-        //INSTANCE.start();
     }
 
     public static Request getInstance(){
@@ -36,6 +32,7 @@ public class Request {
             this.client = new Socket(serverName, 6066);
             this.oOutput = new ObjectOutputStream(client.getOutputStream());
             this.oInput = new ObjectInputStream(client.getInputStream());
+            this.in();
         }
         catch (IOException e){
             e.printStackTrace();
@@ -54,18 +51,30 @@ public class Request {
 
     }
 
-    public String in(){
-        String inComingFromServer = "";
+    private void in(){
+        Thread t = new Thread(new Runnable() {
 
-        try {
-            inComingFromServer = oInput.readObject().toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+            @Override
+            public void run() {
+
+                while (true){
+                    try {
+                        inComingFromServer = oInput.readObject().toString().trim();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        });
+        t.start();
+    }
+
+    public String getServerResponse(){
         return inComingFromServer;
-
     }
 
     public String ip(){

@@ -43,9 +43,16 @@ public class ControllerLogin implements Initializable {
 
         request.out("Login:SELECT username FROM profile WHERE password='"+password+"' AND username='"+username+"'");
 
-        usernameTextField.clear();
-        passwordTextField.clear();
-        this.main.mainInterface(); // Go to the interface
+        String s = request.getServerResponse();
+        System.out.println("(ControllerLogin.java): String response from the server -> " + s);
+
+        if(request.getServerResponse() == "Success"){
+            usernameTextField.clear();
+            passwordTextField.clear();
+            System.out.println("User successfully authenticated");
+            this.main.mainInterface(); // Go to the interface
+        }
+
 
     }
 
