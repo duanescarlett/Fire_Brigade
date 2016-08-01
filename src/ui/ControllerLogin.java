@@ -20,14 +20,18 @@ public class ControllerLogin implements Initializable {
     private TextField usernameTextField;
     @FXML
     private TextField passwordTextField;
-    @FXML private Button btnLogin;
+    @FXML
+    private Button btnLogin;
     private Request request;
+    String username = " ";
+    String password = " ";
+    String splitter = ":";
 
     public ControllerLogin(){
         usernameTextField = new TextField();
         passwordTextField = new TextField();
-        btnLogin = new Button();
-        btnLogin.setText("Login");
+        btnLogin = new Button("Login");
+        //btnLogin.setText("Login");
         this.request = Request.getInstance();
     }
 
@@ -37,23 +41,28 @@ public class ControllerLogin implements Initializable {
 
     @FXML
     public void btnLoginClick(ActionEvent actionEvent){
-        boolean ans = false;
-        String username = usernameTextField.getText();
-        String password = passwordTextField.getText();
+
+        this.username = usernameTextField.getText();
+        this.password = passwordTextField.getText();
+        this.splitter = ":";
+        String masterString = username + splitter + password;
 
         request.out("Login:SELECT username FROM profile WHERE password='"+password+"' AND username='"+username+"'");
 
         String s = request.getServerResponse();
         System.out.println("(ControllerLogin.java): String response from the server -> " + s);
 
-        if(request.getServerResponse() == "Success"){
-            usernameTextField.clear();
-            passwordTextField.clear();
-            System.out.println("User successfully authenticated");
-            this.main.mainInterface(); // Go to the interface
+        boolean trigger = true;
+        do{
+            if(request.getServerResponse() == "Success"){
+                usernameTextField.clear();
+                passwordTextField.clear();
+                System.out.println("User successfully authenticated");
+                trigger = false;
+                this.main.mainInterface(); // Go to the interface
+            }
         }
-
-
+        while (trigger);
     }
 
     @Override

@@ -2,7 +2,6 @@ package ui;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -34,7 +33,7 @@ public class ControllerSignUp implements Initializable{
     String sqlStatement;
 
     public ControllerSignUp() {
-        this.btnButton = new Button();
+        this.btnButton = new Button("Sign Up");
         this.txtFirstName = new TextField();
         this.txtLastName = new TextField();
         this.txtEmail = new TextField();
@@ -42,7 +41,6 @@ public class ControllerSignUp implements Initializable{
         this.txtPassword = new TextField();
         this.radioMale = new RadioButton();
         this.radioFemale = new RadioButton();
-        this.btnButton.setText("Sign Up");
         this.request = Request.getInstance();
     }
 
@@ -73,7 +71,7 @@ public class ControllerSignUp implements Initializable{
         String timeStamp = dateTime.toString();
         String name = txtFirstName.getText() + " " + txtLastName.getText();
 
-        sqlStatement = "Sign Up:INSERT INTO profile (gender, email, username, password, ip_address, date_time, name) VALUES('"+gender+"', '"+email+"', '"+username+"', '"+password+"', '"+ip+"', '"+timeStamp+"', '"+name+"')";
+        sqlStatement = "Sign Up:INSERT INTO fire_brigade.profile (username, password, email, gender, datetime, ip_address, name) VALUES('"+username+"', '"+password+"', '"+email+"', '"+gender+"', '"+timeStamp+"', '"+ip+"', '"+name+"')";
 
         // Clear the field after send button clicked
         txtFirstName.clear();
@@ -83,8 +81,7 @@ public class ControllerSignUp implements Initializable{
         txtPassword.clear();
 
         this.request.out(sqlStatement); // Send off to the server
-        this.main.mainInterface();
-
+        this.main.login();
     }
 
     @Override
