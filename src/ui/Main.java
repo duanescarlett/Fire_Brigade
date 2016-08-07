@@ -4,18 +4,16 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 import static ui.Controller.confirm;
 
-
 public class Main extends Application{
 
     private static FXMLLoader root;
-    private static Stage window;
+    public static Stage window;
     private static Parent pane;
 
     @Override
@@ -31,11 +29,13 @@ public class Main extends Application{
             e.consume();
             this.closeProgram();
         });
-        this.window.setScene(new Scene(pane));
+
+        Scene s = new Scene(this.pane);
+        s.getStylesheets().add("ui/Styles.css");
+
+        this.window.setScene(s);
         this.window.show();
     }
-
-
 
     protected void signUp() {
         this.TheFXMLLoader("signUp.fxml");
@@ -43,7 +43,10 @@ public class Main extends Application{
         ControllerSignUp con = root.getController();
         con.setMain(this);
 
-        this.window.setScene(new Scene(pane));
+        Scene s = new Scene(this.pane);
+        s.getStylesheets().add("ui/Styles.css");
+
+        this.window.setScene(s);
         this.window.show();
     }
 
@@ -63,7 +66,10 @@ public class Main extends Application{
         ControllerLogin con = root.getController();
         con.setMain(this);
 
-        this.window.setScene(new Scene(pane));
+        Scene s = new Scene(this.pane);
+        s.getStylesheets().add("ui/Styles.css");
+
+        this.window.setScene(s);
         this.window.show();
     }
 
@@ -73,7 +79,10 @@ public class Main extends Application{
         Controller con = root.getController();
         con.setMain(this);
 
-        this.window.setScene(new Scene(pane));
+        Scene s = new Scene(this.pane);
+        s.getStylesheets().add("ui/Styles.css");
+
+        this.window.setScene(s);
         this.window.show();
     }
 

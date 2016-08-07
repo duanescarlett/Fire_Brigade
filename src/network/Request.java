@@ -17,7 +17,7 @@ public class Request {
     private Socket client;
     private OutputStream oOutput;
     private InputStream oInput;
-    public String inComingFromServer = "";
+    private String inComingFromServer = "null";
 
     private ServerSocketChannel serverSocketChannel;
     private Selector selector;
@@ -30,7 +30,6 @@ public class Request {
 
     SelectionKey selectionKey;
     SocketChannel socketChannel;
-    ByteBuffer byteBuffer;
 
     Connections con;
 
@@ -48,7 +47,7 @@ public class Request {
             this.client = new Socket(this.con.serverAddr, this.con.port);
             this.oOutput = client.getOutputStream();
             this.oInput = client.getInputStream();
-            this.buffer = ByteBuffer.allocateDirect(100);
+            this.buffer = ByteBuffer.allocateDirect(1000);
             this.in();
         }
         catch (IOException e){
@@ -71,65 +70,31 @@ public class Request {
 
     }
 
-    private void disconnect(){
-        if(selectionKey != null)
-            selectionKey.cancel();
-
-        if(socketChannel == null)
-            return;
-
-        try {
-            socketChannel.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void read(){
-        try {
-
-        }catch (Throwable t){
-            disconnect();
-            t.printStackTrace();
-        }
-    }
-
-    private void in(){
+    private synchronized void in(){
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-
-                //byteBuffer = ByteBuffer.wrap(oInput);
                 byte[] array1 = new byte[buffer.limit()];
 
                 try {
                     oInput.read(array1);
                     String mes = new String (array1);
                     System.out.println("(Request.java): This is what we got from the server-> " + mes);
-                    inComingFromServer = mes;
-                } catch (IOException e) {
+                    Request.this.inComingFromServer = mes;
+                }
+                catch (IOException e) {
                     e.printStackTrace();
                 }
 
-                int read = -1;
-                char[] s;
-
-                try {
-                    while ((read = oInput.read()) != -1){
-                        System.out.println(read);
-                        oInput.read();
-                    }
-                } catch (IOException e){
-                    e.printStackTrace();
-                }
             }
+
         });
+
         t.setName("Server Listener");
         t.start();
     }
 
-    public String getServerResponse(){
+    public synchronized String getServerResponse(){
         return inComingFromServer;
     }
 

@@ -1,53 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.geometry.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.Group?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Controller">
+<HBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Controller">
    <children>
       <VBox prefHeight="200.0" prefWidth="100.0">
          <children>
-            <Group>
-               <children>
-                  <ImageView fitHeight="43.0" fitWidth="63.0" pickOnBounds="true" preserveRatio="true" />
-                  <Label alignment="CENTER_RIGHT" layoutX="82.0" layoutY="13.0" text="Label" />
-               </children>
-            </Group>
-            <Label text="Label" />
-            <ListView fx:id="chatMemberBox" prefHeight="215.0" prefWidth="110.0" />
+            <ImageView fx:id="imgLogo" fitHeight="43.0" fitWidth="63.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../Documents/My%20Projects%20Docs/JFB/site/img/logo.jpg" />
+               </image>
+            </ImageView>
+            <Group />
+            <Label text="Notifications" wrapText="true" />
+            <ListView fx:id="chatMemberBox" prefHeight="311.0" prefWidth="90.0" />
          </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
       </VBox>
       <VBox prefHeight="200.0" prefWidth="100.0">
          <children>
-            <Group>
-               <children>
-                  <ImageView fitHeight="43.0" fitWidth="63.0" pickOnBounds="true" preserveRatio="true" />
-                  <Label alignment="CENTER_RIGHT" layoutX="82.0" layoutY="13.0" text="Label" />
-               </children>
-            </Group>
-            <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="356.0" prefWidth="110.0">
+            <Group />
+            <Label alignment="CENTER_RIGHT" text="Label" />
+            <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="359.0" prefWidth="100.0">
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="181.0" prefWidth="98.0" />
               </items>
             </SplitPane>
          </children>
       </VBox>
-      <VBox prefHeight="400.0" prefWidth="698.0">
+      <VBox fx:id="vBoxPane" prefHeight="400.0" prefWidth="698.0">
          <children>
             <ToolBar prefHeight="16.0" prefWidth="401.0">
               <items>
-                <Button mnemonicParsing="false" text="Button" />
-                  <Button mnemonicParsing="false" text="Button" />
-                  <Button mnemonicParsing="false" text="Button" />
-                  <Button alignment="BASELINE_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" text="Button" />
+                <Button contentDisplay="RIGHT" mnemonicParsing="false" text="Button" />
+                  <Label fx:id="lblUsername" alignment="CENTER_RIGHT" graphicTextGap="10.0" text="Username" />
               </items>
             </ToolBar>
             <TextArea fx:id="chatWindow" prefHeight="233.0" prefWidth="680.0">
@@ -57,15 +50,20 @@
             </TextArea>
             <HBox>
                <children>
-                  <TextField fx:id="chatTextInput" prefHeight="64.0" prefWidth="570.0" promptText="Send a Message....">
+                  <TextField fx:id="chatTextInput" prefHeight="56.0" prefWidth="538.0" promptText="Send a Message....">
                      <VBox.margin>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </VBox.margin>
                      <HBox.margin>
-                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                        <Insets bottom="5.0" left="15.0" right="5.0" top="5.0" />
                      </HBox.margin>
                   </TextField>
-                  <Button fx:id="btnSend" alignment="CENTER" contentDisplay="CENTER" layoutX="555.0" layoutY="25.0" mnemonicParsing="false" onAction="#handleBtnSendClick" prefHeight="83.0" prefWidth="60.0" text="Send">
+                  <Button fx:id="btnSend" alignment="CENTER" contentDisplay="CENTER" layoutX="555.0" layoutY="25.0" mnemonicParsing="false" onAction="#handleBtnSendClick" prefHeight="61.0" prefWidth="60.0" text="Send">
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="btnAttach" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleBtnSendClick" prefHeight="61.0" prefWidth="50.0" text="Attach">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
@@ -75,4 +73,7 @@
          </children>
       </VBox>
    </children>
+   <padding>
+      <Insets top="10.0" />
+   </padding>
 </HBox>

@@ -23,15 +23,13 @@ public class ControllerLogin implements Initializable {
     @FXML
     private Button btnLogin;
     private Request request;
-    String username = " ";
-    String password = " ";
-    String splitter = ":";
+    String username;
+    String password;
 
     public ControllerLogin(){
         usernameTextField = new TextField();
         passwordTextField = new TextField();
         btnLogin = new Button("Login");
-        //btnLogin.setText("Login");
         this.request = Request.getInstance();
     }
 
@@ -44,29 +42,54 @@ public class ControllerLogin implements Initializable {
 
         this.username = usernameTextField.getText();
         this.password = passwordTextField.getText();
-        this.splitter = ":";
-        String masterString = username + splitter + password;
 
         request.out("Login:SELECT username FROM profile WHERE password='"+password+"' AND username='"+username+"'");
 
-        String s = request.getServerResponse();
-        System.out.println("(ControllerLogin.java): String response from the server -> " + s);
+        this.listenToServer();
+        this.usernameTextField.clear();
+        this.passwordTextField.clear();
+        this.main.mainInterface();
 
-        boolean trigger = true;
-        do{
-            if(request.getServerResponse() == "Success"){
-                usernameTextField.clear();
-                passwordTextField.clear();
-                System.out.println("User successfully authenticated");
-                trigger = false;
-                this.main.mainInterface(); // Go to the interface
+    }
+
+    private void listenToServer(){
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean state = true;
+                String test;
+
+                int count = 0;
+                do{
+
+                    test = request.getServerResponse();
+
+                    if(test.equals("null")){
+                        //continue;
+                    }
+                    else {
+                        String bool = "yes";
+                        System.out.println("(ControllerLogin.java): String response from the server -> " + request.getServerResponse());
+                        state = false;
+                        request.out("Update:UPDATE profile SET online='"+bool+"' WHERE username='"+username+"'");
+                    }
+
+                    System.out.println("(ControllerLogin.java): looping -> " + count++);
+
+                }while (state);
+
             }
-        }
-        while (trigger);
+
+        });
+
+        t.setName("Listener for auth");
+        t.start();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("(ControllerLogin.java): Initialized");
+        //this.btnLogin.setText("Login");
     }
 }

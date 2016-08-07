@@ -8,6 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -23,6 +24,7 @@ public class Controller implements Initializable{
     private static Stage window;
     private Request request;
     private ChatClient im;
+    //private DomParser dom;
     @FXML
     private Button btnSend;
     @FXML
@@ -31,15 +33,64 @@ public class Controller implements Initializable{
     private TextArea chatWindow;
     @FXML
     private ListView<String> chatMemberBox;
+    @FXML
+    private Label lblUsername;
+    @FXML
+    public ImageView imgLogo;
+
+    private String username;
 
     public Controller() {
         this.btnSend = new Button();
         this.chatTextInput = new TextField();
         this.chatWindow = new TextArea();
         this.chatMemberBox = new ListView<String>();
-        this.btnSend.setText("Send");
+        this.lblUsername = new Label();
+        this.imgLogo = new ImageView();
         this.request = Request.getInstance();
+
         this.im = new ChatClient();
+
+        this.listenToServer();
+    }
+
+    private void listenToServer(){
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean state = true;
+                String test;
+
+                int count = 0;
+                do{
+
+                    test = request.getServerResponse();
+
+                    if(test.equals("null")){
+                        //continue;
+                    }
+                    else {
+                        System.out.println("(Controller.java): String response from the server -> " + request.getServerResponse());
+                        state = false;
+                        Controller.this.username = request.getServerResponse();
+                    }
+
+                    System.out.println("(Controller.java): looping -> " + count++);
+
+                }while (state);
+
+                //ControllerLogin.this.main.mainInterface();
+            }
+        });
+
+        t.setName("Listener for auth main view");
+        try {
+            t.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        t.start();
     }
 
     public void setMain(Main main){
@@ -101,31 +152,15 @@ public class Controller implements Initializable{
         if(stringPieces[0] == "Chat")
             chatWindow.appendText("Server Response -> " + stringPieces[1].trim() + "\n");
 
-//        chatWindow.appendText("Server Response -> " + stringPieces[1].trim() + "\n");
-//        chatWindow.appendText("Server Response -> " + stringPieces[0].trim() + "\n");
         System.out.println(stringPieces[0]);
-    }
-
-    private void threadSelector(){
-        while (true){
-            switch (request.getServerResponse()){
-                case "User Stack":
-                    System.out.println("(Controller.java) Indentified the user stack");
-                break;
-
-                case "Server":
-                    System.out.println("(Controller.java) Indentified a server response");
-                break;
-
-                default:
-                    System.out.println("We hit the default");
-            }
-        }
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("(Controller.java): Initialized");
+        System.out.println("(Controller.java): This is the username -> " + this.request.getServerResponse());
+        this.lblUsername.setText(this.request.getServerResponse());
+        //this.lblUsername.setText("Work");
     }
 
 }
