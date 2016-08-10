@@ -25,12 +25,14 @@ public class ControllerLogin implements Initializable {
     private Request request;
     String username;
     String password;
+    User user;
 
     public ControllerLogin(){
         usernameTextField = new TextField();
         passwordTextField = new TextField();
         btnLogin = new Button("Login");
         this.request = Request.getInstance();
+        this.user = User.getInstance();
     }
 
     public void setMain(Main main){
@@ -72,7 +74,7 @@ public class ControllerLogin implements Initializable {
                         String bool = "yes";
                         System.out.println("(ControllerLogin.java): String response from the server -> " + request.getServerResponse());
                         state = false;
-                        request.out("Update:UPDATE profile SET online='"+bool+"' WHERE username='"+username+"'");
+                        user.setUsername(request.getServerResponse());
                     }
 
                     System.out.println("(ControllerLogin.java): looping -> " + count++);
@@ -85,11 +87,12 @@ public class ControllerLogin implements Initializable {
 
         t.setName("Listener for auth");
         t.start();
+
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("(ControllerLogin.java): Initialized");
-        //this.btnLogin.setText("Login");
     }
+
 }

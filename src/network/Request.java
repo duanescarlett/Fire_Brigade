@@ -47,7 +47,7 @@ public class Request {
             this.client = new Socket(this.con.serverAddr, this.con.port);
             this.oOutput = client.getOutputStream();
             this.oInput = client.getInputStream();
-            this.buffer = ByteBuffer.allocateDirect(1000);
+            this.buffer = ByteBuffer.allocateDirect(1024);
             this.in();
         }
         catch (IOException e){

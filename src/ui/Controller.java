@@ -23,6 +23,7 @@ public class Controller implements Initializable{
     private static Button btnYes, btnNo;
     private static Stage window;
     private Request request;
+    private User user;
     private ChatClient im;
     //private DomParser dom;
     @FXML
@@ -38,7 +39,7 @@ public class Controller implements Initializable{
     @FXML
     public ImageView imgLogo;
 
-    private String username;
+    String bool;
 
     public Controller() {
         this.btnSend = new Button();
@@ -48,6 +49,7 @@ public class Controller implements Initializable{
         this.lblUsername = new Label();
         this.imgLogo = new ImageView();
         this.request = Request.getInstance();
+        this.user = User.getInstance();
 
         this.im = new ChatClient();
 
@@ -56,11 +58,12 @@ public class Controller implements Initializable{
 
     private void listenToServer(){
 
-        Thread t = new Thread(new Runnable() {
+        Thread t = new Thread(new Runnable(){
             @Override
             public void run() {
                 boolean state = true;
                 String test;
+                String[] testString;
 
                 int count = 0;
                 do{
@@ -73,14 +76,18 @@ public class Controller implements Initializable{
                     else {
                         System.out.println("(Controller.java): String response from the server -> " + request.getServerResponse());
                         state = false;
-                        Controller.this.username = request.getServerResponse();
+                        user.setUsername(request.getServerResponse());
                     }
 
+                    // Listen for users now
                     System.out.println("(Controller.java): looping -> " + count++);
 
                 }while (state);
 
-                //ControllerLogin.this.main.mainInterface();
+                state = true;
+                do{
+                    System.out.println("(Controller.java): **** Listening for users -> " + request.getServerResponse());
+                }while (state);
             }
         });
 
@@ -91,6 +98,11 @@ public class Controller implements Initializable{
             e.printStackTrace();
         }
         t.start();
+
+        String username = user.getUsername();
+        this.bool = "yes";
+        this.request.out("Update:UPDATE profile SET online='"+bool+"' WHERE username='"+username+"' LIMIT 1");
+        System.out.println("(Controller.java): This is the username from User() -> " + user.getUsername());
     }
 
     public void setMain(Main main){
