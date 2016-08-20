@@ -1,79 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<HBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Controller">
+
+<VBox prefHeight="485.0" prefWidth="898.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.Controller">
    <children>
-      <VBox prefHeight="200.0" prefWidth="100.0">
+      <ToolBar fx:id="toolbar" nodeOrientation="RIGHT_TO_LEFT" prefHeight="16.0" prefWidth="401.0" VBox.vgrow="ALWAYS">
+        <items>
+          <Button contentDisplay="RIGHT" mnemonicParsing="false" text="Button" textOverrun="CLIP" />
+            <Button mnemonicParsing="false" text="Button" />
+            <Button mnemonicParsing="false" text="Button" />
+            <Label fx:id="lblUsername" alignment="CENTER_RIGHT" graphicTextGap="10.0" text="Username" />
+        </items>
+      </ToolBar>
+      <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="429.0" prefWidth="898.0">
          <children>
-            <ImageView fx:id="imgLogo" fitHeight="43.0" fitWidth="63.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../../Documents/My%20Projects%20Docs/JFB/site/img/logo.jpg" />
-               </image>
-            </ImageView>
-            <Group />
-            <Label text="Notifications" wrapText="true" />
-            <ListView fx:id="chatMemberBox" prefHeight="311.0" prefWidth="90.0" />
-         </children>
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding>
-      </VBox>
-      <VBox prefHeight="200.0" prefWidth="100.0">
-         <children>
-            <Group />
-            <Label alignment="CENTER_RIGHT" text="Label" />
-            <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="359.0" prefWidth="100.0">
-              <items>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="181.0" prefWidth="98.0" />
-              </items>
-            </SplitPane>
-         </children>
-      </VBox>
-      <VBox fx:id="vBoxPane" prefHeight="400.0" prefWidth="698.0">
-         <children>
-            <ToolBar prefHeight="16.0" prefWidth="401.0">
-              <items>
-                <Button contentDisplay="RIGHT" mnemonicParsing="false" text="Button" />
-                  <Label fx:id="lblUsername" alignment="CENTER_RIGHT" graphicTextGap="10.0" text="Username" />
-              </items>
-            </ToolBar>
-            <TextArea fx:id="chatWindow" prefHeight="233.0" prefWidth="680.0">
-               <VBox.margin>
-                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-               </VBox.margin>
-            </TextArea>
-            <HBox>
+            <VBox prefHeight="419.0" prefWidth="338.0">
                <children>
-                  <TextField fx:id="chatTextInput" prefHeight="56.0" prefWidth="538.0" promptText="Send a Message....">
+                  <ImageView fx:id="imgLogo" fitHeight="43.0" fitWidth="63.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../components/jamaica-fire-service-apparel.jpg" />
+                     </image>
+                  </ImageView>
+                  <Group />
+                  <ListView fx:id="chatMemberBox" prefHeight="366.0" prefWidth="196.0" VBox.vgrow="ALWAYS" />
+               </children>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </VBox>
+            <VBox prefHeight="419.0" prefWidth="335.0">
+               <children>
+                  <Label alignment="CENTER_RIGHT" text="Notifications" />
+                  <ListView fx:id="notificationList" editable="true" prefHeight="370.0" prefWidth="201.0" VBox.vgrow="ALWAYS" />
+               </children>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </VBox>
+            <VBox fx:id="vBoxPane" alignment="TOP_RIGHT" prefHeight="419.0" prefWidth="625.0">
+               <children>
+                  <TextArea fx:id="chatWindow" prefHeight="318.0" prefWidth="487.0" VBox.vgrow="ALWAYS">
                      <VBox.margin>
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </VBox.margin>
-                     <HBox.margin>
-                        <Insets bottom="5.0" left="15.0" right="5.0" top="5.0" />
-                     </HBox.margin>
-                  </TextField>
-                  <Button fx:id="btnSend" alignment="CENTER" contentDisplay="CENTER" layoutX="555.0" layoutY="25.0" mnemonicParsing="false" onAction="#handleBtnSendClick" prefHeight="61.0" prefWidth="60.0" text="Send">
-                     <HBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </HBox.margin>
-                  </Button>
-                  <Button fx:id="btnAttach" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleBtnSendClick" prefHeight="61.0" prefWidth="50.0" text="Attach">
-                     <HBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </HBox.margin>
-                  </Button>
+                  </TextArea>
+                  <HBox prefHeight="71.0" prefWidth="460.0">
+                     <children>
+                        <TextField fx:id="chatTextInput" prefHeight="61.0" prefWidth="312.0" promptText="Send a Message...." HBox.hgrow="ALWAYS">
+                           <VBox.margin>
+                              <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                           </VBox.margin>
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="15.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                        </TextField>
+                        <Button fx:id="btnSend" alignment="CENTER" contentDisplay="CENTER" layoutX="555.0" layoutY="25.0" mnemonicParsing="false" onAction="#handleBtnSendClick" prefHeight="61.0" prefWidth="54.0" text="Send" HBox.hgrow="ALWAYS">
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="btnAttach" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleBtnSendClick" prefHeight="61.0" prefWidth="70.0" text="Attach" HBox.hgrow="ALWAYS">
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
                </children>
-            </HBox>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </VBox>
          </children>
-      </VBox>
+         <padding>
+            <Insets top="10.0" />
+         </padding>
+      </HBox>
    </children>
-   <padding>
-      <Insets top="10.0" />
-   </padding>
-</HBox>
+</VBox>

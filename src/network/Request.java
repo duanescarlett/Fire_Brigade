@@ -1,35 +1,26 @@
 package network;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetAddress;
-import java.net.Socket;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
+import java.nio.channels.*;
 
 public class Request {
 
-    private Socket client;
-    private OutputStream oOutput;
-    private InputStream oInput;
     private String inComingFromServer = "null";
 
-    private ServerSocketChannel serverSocketChannel;
-    private Selector selector;
+    private SocketChannel socketChannel;
     ByteBuffer buffer;
 
     private class Connections {
-        private String serverAddr = "127.0.0.1";
-        private int port = 6066;
-    }
+        private InetSocketAddress hostAddress = new InetSocketAddress("127.0.0.1", 6066);
 
-    SelectionKey selectionKey;
-    SocketChannel socketChannel;
+        public InetSocketAddress getHostAddress(){
+            return hostAddress;
+        }
+    }
 
     Connections con;
 
@@ -42,31 +33,41 @@ public class Request {
     }
 
     private Request() {
+        this.con = new Connections();
+
         try {
-            this.con = new Connections();
-            this.client = new Socket(this.con.serverAddr, this.con.port);
-            this.oOutput = client.getOutputStream();
-            this.oInput = client.getInputStream();
-            this.buffer = ByteBuffer.allocateDirect(1024);
-            this.in();
+            this.socketChannel = SocketChannel.open(this.con.getHostAddress());
         }
-        catch (IOException e){
+        catch (IOException e) {
             e.printStackTrace();
         }
+
+        this.buffer = ByteBuffer.allocateDirect(1024);
+        this.in();
+
     }
 
     public void out(String s){
 
         System.out.println("(Request.java): -> " + s);
-        byte[] set = s.getBytes();
+
+        this.buffer = ByteBuffer.wrap(s.getBytes());
 
         try {
-            oOutput.write(set);
-            oOutput.flush();
-        }
-        catch (IOException e) {
+
+            while(buffer.hasRemaining()){
+                this.socketChannel.write(this.buffer);
+                System.out.println("Writing to the buffer");
+            }
+            //s.write(buf); // Wont always write everything
+            if (!buffer.hasRemaining()) {
+                buffer.compact();
+            }
+        } catch (IOException e) {
             e.printStackTrace();
         }
+        this.buffer.flip();
+        //this.buffer.clear();
 
     }
 
@@ -74,24 +75,29 @@ public class Request {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                byte[] array1 = new byte[buffer.limit()];
 
-                try {
-                    oInput.read(array1);
-                    String mes = new String (array1);
-                    System.out.println("(Request.java): This is what we got from the server-> " + mes);
-                    Request.this.inComingFromServer = mes;
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
+                boolean swich = true;
+
+                while (swich){
+
+                    while (buffer.hasRemaining()) {
+                        char ch = (char) buffer.get();
+                        System.out.print(ch);
+                        inComingFromServer += ch;
+                    }
+
                 }
 
+                buffer.flip();
+                System.out.println("(Request.java):  -> " + inComingFromServer);
+                //buffer.clear();
             }
 
         });
 
         t.setName("Server Listener");
         t.start();
+
     }
 
     public synchronized String getServerResponse(){

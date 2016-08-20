@@ -71,7 +71,7 @@ public class ControllerSignUp implements Initializable{
         String timeStamp = dateTime.toString();
         String name = txtFirstName.getText() + " " + txtLastName.getText();
 
-        sqlStatement = "Sign Up:INSERT INTO fire_brigade.profile (username, password, email, gender, datetime, ip_address, name) VALUES('"+username+"', '"+password+"', '"+email+"', '"+gender+"', '"+timeStamp+"', '"+ip+"', '"+name+"')";
+        sqlStatement = "Sign Up:INSERT INTO fire_brigade.profile (username, password, email, gender, datetime, ip_address, name, online) VALUES('"+username+"', '"+password+"', '"+email+"', '"+gender+"', '"+timeStamp+"', '"+ip+"', '"+name+"', 'yes')";
 
         // Clear the field after send button clicked
         txtFirstName.clear();

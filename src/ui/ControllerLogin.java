@@ -31,6 +31,7 @@ public class ControllerLogin implements Initializable {
         usernameTextField = new TextField();
         passwordTextField = new TextField();
         btnLogin = new Button("Login");
+//        this.request = Request.getInstance();
         this.request = Request.getInstance();
         this.user = User.getInstance();
     }

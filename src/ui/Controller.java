@@ -1,6 +1,8 @@
 package ui;
 
 import controller.ChatClient;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -35,17 +37,30 @@ public class Controller implements Initializable{
     @FXML
     private ListView<String> chatMemberBox;
     @FXML
+    private ListView<String> notificationList;
+    @FXML
     private Label lblUsername;
     @FXML
     public ImageView imgLogo;
+    @FXML
+    public ToolBar toolBar;
 
     String bool;
 
     public Controller() {
+        this.toolBar = new ToolBar();
         this.btnSend = new Button();
         this.chatTextInput = new TextField();
         this.chatWindow = new TextArea();
         this.chatMemberBox = new ListView<String>();
+        this.chatMemberBox.setPrefSize(200, 250);
+        this.chatMemberBox.setEditable(true);
+        ObservableList<String> items =FXCollections.observableArrayList ( "A", "B", "C", "D");
+
+        this.notificationList = new ListView<String>();
+        this.notificationList.setItems(items);
+
+        this.chatMemberBox.setItems(items);
         this.lblUsername = new Label();
         this.imgLogo = new ImageView();
         this.request = Request.getInstance();
@@ -84,25 +99,25 @@ public class Controller implements Initializable{
 
                 }while (state);
 
-                state = true;
-                do{
-                    System.out.println("(Controller.java): **** Listening for users -> " + request.getServerResponse());
-                }while (state);
+//                state = true;
+//                do{
+//                    System.out.println("(Controller.java): **** Listening for users -> " + request.getServerResponse());
+//                }while (state);
             }
         });
 
         t.setName("Listener for auth main view");
         try {
-            t.sleep(2000);
+            t.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         t.start();
 
-        String username = user.getUsername();
-        this.bool = "yes";
-        this.request.out("Update:UPDATE profile SET online='"+bool+"' WHERE username='"+username+"' LIMIT 1");
-        System.out.println("(Controller.java): This is the username from User() -> " + user.getUsername());
+//        String username = user.getUsername();
+//        this.bool = "yes";
+//        this.request.out("Update:UPDATE profile SET online='"+bool+"' WHERE username='"+username+"' LIMIT 1");
+//        System.out.println("(Controller.java): This is the username from User() -> " + user.getUsername());
     }
 
     public void setMain(Main main){

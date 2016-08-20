@@ -1,5 +1,5 @@
 .root{
-    -fx-background-color: #cccccc;
+    -fx-background-color: #EBEBEB;
 
 }
 
@@ -8,7 +8,37 @@
 }
 
 .button{
-    -fx-background-color: #7CAFC2;
     -fx-border-size: 1px;
-    -fx-border-color: #ffffff;
+    -fx-border-color: red;
+    -fx-border-size: 2px;
+}
+
+#toolbar{
+    -fx-background-color: red;
+}
+
+#chatWindow{
+    -fx-background-color: #DCDCDC;
+    -fx-border-color: yellow;
+}
+
+#chatTextInput{
+    -fx-border-color: yellow;
+    -fx-background-color: #DCDCDC;
+}
+
+#notificationList{
+    -fx-border-color: yellow;
+    -fx-background-color: #DCDCDC;
+}
+
+#chatMemberBox{
+    -fx-border-color: yellow;
+    -fx-border-size: 3px;
+    -fx-background-color: #DCDCDC;
+}
+
+#lblUsername{
+    -fx-text-color: yellow;
+    color: yellow;
 }
