@@ -54,16 +54,10 @@ public class Request {
         this.buffer = ByteBuffer.wrap(s.getBytes());
 
         try {
-
-            while(buffer.hasRemaining()){
-                this.socketChannel.write(this.buffer);
-                System.out.println("Writing to the buffer");
-            }
-            //s.write(buf); // Wont always write everything
-            if (!buffer.hasRemaining()) {
-                buffer.compact();
-            }
-        } catch (IOException e) {
+            this.socketChannel.write(this.buffer);
+            this.buffer.clear();
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
         this.buffer.flip();
@@ -76,19 +70,15 @@ public class Request {
             @Override
             public void run() {
 
-                boolean swich = true;
 
-                while (swich){
-
-                    while (buffer.hasRemaining()) {
-                        char ch = (char) buffer.get();
-                        System.out.print(ch);
-                        inComingFromServer += ch;
-                    }
-
+                try {
+                    socketChannel.read(buffer);
+                    buffer.flip();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
 
-                buffer.flip();
+                inComingFromServer = new String(buffer.array()).trim();
                 System.out.println("(Request.java):  -> " + inComingFromServer);
                 //buffer.clear();
             }
