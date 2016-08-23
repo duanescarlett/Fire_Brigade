@@ -78,7 +78,7 @@ public class ControllerLogin implements Initializable {
                         user.setUsername(request.getServerResponse());
                     }
 
-                    System.out.println("(ControllerLogin.java): looping -> " + count++);
+                    //System.out.println("(ControllerLogin.java): looping -> " + count++);
 
                 }while (state);
 

@@ -12,12 +12,16 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import network.Request;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.stream.Stream;
 
 public class Controller implements Initializable{
     private Main main;
@@ -27,6 +31,8 @@ public class Controller implements Initializable{
     private Request request;
     private User user;
     private ChatClient im;
+    private File file;
+    private String username;
     //private DomParser dom;
     @FXML
     private Button btnSend;
@@ -45,7 +51,7 @@ public class Controller implements Initializable{
     @FXML
     public ToolBar toolBar;
 
-    String bool;
+
 
     public Controller() {
         this.toolBar = new ToolBar();
@@ -71,6 +77,27 @@ public class Controller implements Initializable{
         this.listenToServer();
     }
 
+    private void parser(String s){
+        String[] stringPeices = s.split(":", 2);
+
+        if(stringPeices[0].equals("Test")){
+
+        }
+        else if(stringPeices[0].equals("Chat")){
+            this.chatWindow.appendText(stringPeices[1].trim());
+        }
+        else if(stringPeices[0].equals("Username")){
+            System.out.println("(Controller.java): -> username " + stringPeices[1]);
+            user.setUsername(stringPeices[1].trim());
+            this.lblUsername.setText(user.getUsername());
+        }
+        else {
+            //System.out.println("(Controller.java): -> This did not work");
+            //System.out.println("(Controller.java): -> " + stringPeices[0]);
+        }
+
+    }
+
     private void listenToServer(){
 
         Thread t = new Thread(new Runnable(){
@@ -78,10 +105,8 @@ public class Controller implements Initializable{
             public void run() {
                 boolean state = true;
                 String test;
-                String[] testString;
 
-                int count = 0;
-                do{
+                while (state){
 
                     test = request.getServerResponse();
 
@@ -89,35 +114,21 @@ public class Controller implements Initializable{
                         //continue;
                     }
                     else {
-                        System.out.println("(Controller.java): String response from the server -> " + request.getServerResponse());
-                        state = false;
-                        user.setUsername(request.getServerResponse());
+                        //System.out.println("(Controller.java): String response from the server -> " + request.getServerResponse());
+                        //System.out.println("(Controller.java): looping -> " + count++);
+                        parser(request.getServerResponse().trim());
+                        //state = false;
+//                        user.setUsername(request.getServerResponse());
                     }
 
-                    // Listen for users now
-                    System.out.println("(Controller.java): looping -> " + count++);
+                }
 
-                }while (state);
-
-//                state = true;
-//                do{
-//                    System.out.println("(Controller.java): **** Listening for users -> " + request.getServerResponse());
-//                }while (state);
             }
         });
 
         t.setName("Listener for auth main view");
-        try {
-            t.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         t.start();
 
-//        String username = user.getUsername();
-//        this.bool = "yes";
-//        this.request.out("Update:UPDATE profile SET online='"+bool+"' WHERE username='"+username+"' LIMIT 1");
-//        System.out.println("(Controller.java): This is the username from User() -> " + user.getUsername());
     }
 
     public void setMain(Main main){
@@ -166,27 +177,42 @@ public class Controller implements Initializable{
 
     public void handleBtnSendClick(ActionEvent actionEvent) {
         System.out.println(chatTextInput.getText());
-        this.im.sendMessage("Chat:" + chatTextInput.getText());
+//        this.im.sendMessage();
+        this.request.out("Chat:" + chatTextInput.getText());
         chatWindow.appendText("Me: -> " + chatTextInput.getText() + "\n");
         chatTextInput.clear();
-        this.listen();
+        //this.listen();
     }
 
-    private void listen(){
+    public void attachBtnClick(ActionEvent actionEvent) throws IOException {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+        Stage stage = new Stage();
 
-        String[] stringPieces = im.displayMessage().split(":", 2);
+        fileChooser.setTitle("View Pictures");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home"))
+        );
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("All Images", "*.*"),
+                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                new FileChooser.ExtensionFilter("GIF", "*.gif"),
+                new FileChooser.ExtensionFilter("BMP", "*.bmp"),
+                new FileChooser.ExtensionFilter("PNG", "*.png")
+        );
 
-        if(stringPieces[0] == "Chat")
-            chatWindow.appendText("Server Response -> " + stringPieces[1].trim() + "\n");
+        this.file = fileChooser.showOpenDialog(stage);
+        System.out.println(file);
 
-        System.out.println(stringPieces[0]);
+        File fileObj = new File(this.file.toString());
+        this.request.sendFile(fileObj);
     }
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("(Controller.java): Initialized");
-        System.out.println("(Controller.java): This is the username -> " + this.request.getServerResponse());
-        this.lblUsername.setText(this.request.getServerResponse());
+        //System.out.println("(Controller.java): This is the username -> " + this.request.getServerResponse());
+        //this.lblUsername.setText(this.request.getServerResponse());
         //this.lblUsername.setText("Work");
     }
 
