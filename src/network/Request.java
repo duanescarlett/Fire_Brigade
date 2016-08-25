@@ -18,19 +18,11 @@ public class Request {
 
     // Selector: multiplexor of SelectableChannel objects
     private Selector selector;
-    private SocketChannel socketChannel;
+    private SocketHolder socketHolder;
     private ServerSocketChannel serverSocketChannel;
     ByteBuffer buffer;
 
-    private class Connections {
-        private InetSocketAddress hostAddress = new InetSocketAddress("127.0.0.1", 6066);
 
-        public InetSocketAddress getHostAddress(){
-            return hostAddress;
-        }
-    }
-
-    Connections con;
 
     private static class SingletonHolder {
         private static final Request INSTANCE = new Request();
@@ -41,12 +33,9 @@ public class Request {
     }
 
     private Request() {
-        this.con = new Connections();
 
         try {
-            this.socketChannel = SocketChannel.open();
-            this.socketChannel.connect(this.con.getHostAddress());
-
+            socketHolder = SocketHolder.getInstance();
             // Selector: multiplexor of SelectableChannel objects
             this.selector = Selector.open(); // selector is open here
         }
@@ -64,7 +53,7 @@ public class Request {
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         while(fc.read(buffer) > 0) {
             buffer.flip();
-            while(this.socketChannel.write(buffer) > 0);
+            while(socketHolder.socketChannel.write(buffer) > 0);
             buffer.clear();
         }
     }
@@ -76,7 +65,7 @@ public class Request {
         this.buffer = ByteBuffer.wrap(s.getBytes());
 
         try {
-            this.socketChannel.write(this.buffer);
+            socketHolder.socketChannel.write(this.buffer);
             this.buffer.clear();
         }
         catch (IOException e) {
@@ -92,63 +81,46 @@ public class Request {
             @Override
             public void run() {
 
-//                try {
-//                    socketChannel.read(buffer);
-//                    buffer.flip();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                inComingFromServer = new String(buffer.array()).trim();
-//                System.out.println("(Request.java):  -> " + inComingFromServer);
-//                buffer.clear();
+                int i = -1;
 
-                ByteBuffer miniBuf = ByteBuffer.allocate(1024);
-                StringBuilder sb = new StringBuilder();
-                int read = 0;
+                while(true){
 
-                try {
+                    try {
+                        int amount_read = -1;
 
-                    while(true){
-                        System.out.println("(Request.java): -> Inside first listener loop");
+                        try {
+                            amount_read = socketHolder.socketChannel.read(buffer);
+                            //buffer.clear();
+                        } catch (Throwable t) { }
 
-//                        while ((read = socketChannel.read(miniBuf)) > 0){
-//                            System.out.println("(Request.java): -> Inside second listener loop");
-//                            miniBuf.flip();
-//                            byte[] bytes = new byte[miniBuf.limit()];
-//                            miniBuf.get(bytes);
-//                            sb.append(new String(bytes));
-//                            miniBuf.clear();
-//                        }
+                        if(amount_read != -1){
+                            System.out.println("sending back " + buffer.position() + " bytes");
 
-                        while (socketChannel.isConnected()){
-                            read = socketChannel.read(miniBuf);
-                            System.out.println("(Request.java): -> Inside second listener loop");
-                            miniBuf.flip();
-                            byte[] bytes = new byte[miniBuf.limit()];
-                            miniBuf.get(bytes);
-                            sb.append(new String(bytes));
-                            miniBuf.clear();
+                            // turn this bus right around and send it back!
+                            buffer.flip();
+                            byte[] buff = new byte[1024];
+                            buffer.rewind();
+                            //buffer.flip();
+                            buffer.get(buff, 0, amount_read);
+                            System.out.println("Server said: " + new String(buff));
+                            //buffer.clear();
+                            buffer.compact();
                         }
 
-                        String msg;
-                        if(read<0) {
-                            msg = "left the chat.\n";
-                            socketChannel.close();
-                        }
-                        else {
-//                msg = key.attachment()+": "+sb.toString();
-                            msg = sb.toString();
-                        }
+                        if (amount_read == -1)
+                            //disconnect();
 
-                        miniBuf.clear();
-                        System.out.println("(Request.java): -> in coming " + msg);
-                        inComingFromServer = msg;
+                        if (amount_read < 1)
+                            return; // if zero
+
+
+                        //socketHolder.socketChannel.write(buffer);
+                    }
+                    catch (Throwable t) {
+                        //disconnect();
+                        t.printStackTrace();
                     }
 
-
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
 
             }
@@ -160,7 +132,7 @@ public class Request {
 
     }
 
-    public synchronized String getServerResponse(){
+    public String getServerResponse(){
         return inComingFromServer;
     }
 

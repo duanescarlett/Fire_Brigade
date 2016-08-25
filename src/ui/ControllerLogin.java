@@ -46,7 +46,7 @@ public class ControllerLogin implements Initializable {
         this.username = usernameTextField.getText();
         this.password = passwordTextField.getText();
 
-        request.out("Login:SELECT username FROM profile WHERE password='"+password+"' AND username='"+username+"'");
+        request.out("Login:SELECT * FROM profile WHERE password='"+password+"' AND username='"+username+"'");
 
         this.listenToServer();
         this.usernameTextField.clear();

@@ -16,12 +16,16 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import network.Request;
+import network.SocketHolder;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
 import java.util.ResourceBundle;
-import java.util.stream.Stream;
 
 public class Controller implements Initializable{
     private Main main;
@@ -32,14 +36,15 @@ public class Controller implements Initializable{
     private User user;
     private ChatClient im;
     private File file;
-    private String username;
-    //private DomParser dom;
+    private ByteBuffer buffer;
+    private SocketHolder socketHolder;
+
     @FXML
     private Button btnSend;
     @FXML
     private TextField chatTextInput;
     @FXML
-    private TextArea chatWindow;
+    public TextArea chatWindow;
     @FXML
     private ListView<String> chatMemberBox;
     @FXML
@@ -52,8 +57,10 @@ public class Controller implements Initializable{
     public ToolBar toolBar;
 
 
-
     public Controller() {
+        this.buffer = ByteBuffer.allocateDirect(1024);
+        this.socketHolder = SocketHolder.getInstance();
+
         this.toolBar = new ToolBar();
         this.btnSend = new Button();
         this.chatTextInput = new TextField();
@@ -78,7 +85,11 @@ public class Controller implements Initializable{
     }
 
     private void parser(String s){
+        System.out.println("(Controller.java): -> Inside parser");
+
         String[] stringPeices = s.split(":", 2);
+
+        System.out.println("(Controller.java): -> Inside parser 2 " + s);
 
         if(stringPeices[0].equals("Test")){
 
@@ -92,8 +103,8 @@ public class Controller implements Initializable{
             this.lblUsername.setText(user.getUsername());
         }
         else {
-            //System.out.println("(Controller.java): -> This did not work");
-            //System.out.println("(Controller.java): -> " + stringPeices[0]);
+            System.out.println("(Controller.java): -> This did not work");
+            System.out.println("(Controller.java): -> " + stringPeices[0]);
         }
 
     }
@@ -105,24 +116,11 @@ public class Controller implements Initializable{
             public void run() {
                 boolean state = true;
                 String test;
+                int count = 0;
 
-                while (state){
-
-                    test = request.getServerResponse();
-
-                    if(test.equals("null")){
-                        //continue;
-                    }
-                    else {
-                        //System.out.println("(Controller.java): String response from the server -> " + request.getServerResponse());
-                        //System.out.println("(Controller.java): looping -> " + count++);
-                        parser(request.getServerResponse().trim());
-                        //state = false;
-//                        user.setUsername(request.getServerResponse());
-                    }
+                while(state) {
 
                 }
-
             }
         });
 
@@ -176,12 +174,10 @@ public class Controller implements Initializable{
     }
 
     public void handleBtnSendClick(ActionEvent actionEvent) {
-        System.out.println(chatTextInput.getText());
-//        this.im.sendMessage();
+        //System.out.println(chatTextInput.getText());
         this.request.out("Chat:" + chatTextInput.getText());
         chatWindow.appendText("Me: -> " + chatTextInput.getText() + "\n");
         chatTextInput.clear();
-        //this.listen();
     }
 
     public void attachBtnClick(ActionEvent actionEvent) throws IOException {
@@ -211,9 +207,7 @@ public class Controller implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("(Controller.java): Initialized");
-        //System.out.println("(Controller.java): This is the username -> " + this.request.getServerResponse());
-        //this.lblUsername.setText(this.request.getServerResponse());
-        //this.lblUsername.setText("Work");
+        this.lblUsername.setText(this.user.getUsername());
     }
 
 }
