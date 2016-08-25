@@ -81,7 +81,7 @@ public class Controller implements Initializable{
 
         this.im = new ChatClient();
 
-        this.listenToServer();
+        this.in();
     }
 
     private void parser(String s){
@@ -100,34 +100,16 @@ public class Controller implements Initializable{
         else if(stringPeices[0].equals("Username")){
             System.out.println("(Controller.java): -> username " + stringPeices[1]);
             user.setUsername(stringPeices[1].trim());
-            this.lblUsername.setText(user.getUsername());
+            //this.lblUsername.setText(user.getUsername());
+            this.lblUsername.setText(this.user.getUsername());
         }
-        else {
-            System.out.println("(Controller.java): -> This did not work");
-            System.out.println("(Controller.java): -> " + stringPeices[0]);
-        }
+//        else {
+//            System.out.println("(Controller.java): -> This did not work");
+//            System.out.println("(Controller.java): -> " + stringPeices[0]);
+//        }
 
     }
 
-    private void listenToServer(){
-
-        Thread t = new Thread(new Runnable(){
-            @Override
-            public void run() {
-                boolean state = true;
-                String test;
-                int count = 0;
-
-                while(state) {
-
-                }
-            }
-        });
-
-        t.setName("Listener for auth main view");
-        t.start();
-
-    }
 
     public void setMain(Main main){
         this.main = main;
@@ -203,11 +185,67 @@ public class Controller implements Initializable{
         this.request.sendFile(fileObj);
     }
 
+    private void in(){
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                int i = -1;
+
+                while(true){
+
+                    try {
+                        int amount_read = -1;
+
+                        try {
+                            amount_read = socketHolder.socketChannel.read(buffer);
+                            //buffer.clear();
+                        } catch (Throwable t) { }
+
+                        if(amount_read != -1){
+                            System.out.println("sending back " + buffer.position() + " bytes");
+
+                            // turn this bus right around and send it back!
+                            buffer.flip();
+                            byte[] buff = new byte[1024];
+                            buffer.rewind();
+                            //buffer.flip();
+                            buffer.get(buff, 0, amount_read);
+                            //System.out.println("Server said: " + new String(buff));
+
+                            parser(new String(buff));
+                            buffer.compact();
+                        }
+
+                        if (amount_read == -1)
+                            //disconnect();
+
+                            if (amount_read < 1)
+                                return; // if zero
+
+
+                        //socketHolder.socketChannel.write(buffer);
+                    }
+                    catch (Throwable t) {
+                        //disconnect();
+                        t.printStackTrace();
+                    }
+
+                }
+
+            }
+
+        });
+
+        t.setName("Server Listener");
+        t.start();
+
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("(Controller.java): Initialized");
-        this.lblUsername.setText(this.user.getUsername());
+//        this.lblUsername.setText(this.user.getUsername());
     }
 
 }

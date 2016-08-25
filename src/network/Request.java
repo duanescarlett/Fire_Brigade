@@ -44,7 +44,6 @@ public class Request {
         }
 
         this.buffer = ByteBuffer.allocateDirect(1024);
-        this.in();
 
     }
 
@@ -73,62 +72,6 @@ public class Request {
         }
         //this.buffer.flip();
         //this.buffer.clear();
-
-    }
-
-    private void in(){
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                int i = -1;
-
-                while(true){
-
-                    try {
-                        int amount_read = -1;
-
-                        try {
-                            amount_read = socketHolder.socketChannel.read(buffer);
-                            //buffer.clear();
-                        } catch (Throwable t) { }
-
-                        if(amount_read != -1){
-                            System.out.println("sending back " + buffer.position() + " bytes");
-
-                            // turn this bus right around and send it back!
-                            buffer.flip();
-                            byte[] buff = new byte[1024];
-                            buffer.rewind();
-                            //buffer.flip();
-                            buffer.get(buff, 0, amount_read);
-                            System.out.println("Server said: " + new String(buff));
-                            //buffer.clear();
-                            buffer.compact();
-                        }
-
-                        if (amount_read == -1)
-                            //disconnect();
-
-                        if (amount_read < 1)
-                            return; // if zero
-
-
-                        //socketHolder.socketChannel.write(buffer);
-                    }
-                    catch (Throwable t) {
-                        //disconnect();
-                        t.printStackTrace();
-                    }
-
-                }
-
-            }
-
-        });
-
-        t.setName("Server Listener");
-        t.start();
 
     }
 
