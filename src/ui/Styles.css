@@ -9,7 +9,7 @@
 
 .button{
     -fx-border-size: 1px;
-    -fx-border-color: red;
+    -fx-border-color: blue;
     -fx-border-size: 2px;
 }
 

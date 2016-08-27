@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
@@ -10,11 +11,16 @@
    <children>
       <Pane prefHeight="273.0" prefWidth="680.0">
          <children>
-            <TextField fx:id="usernameTextField" layoutX="223.0" layoutY="127.0" />
-            <Label layoutX="145.0" layoutY="131.0" text="Username" />
-            <Label layoutX="145.0" layoutY="189.0" text="Password" />
-            <TextField fx:id="passwordTextField" layoutX="223.0" layoutY="185.0" />
-            <Button fx:id="btnLogin" layoutX="145.0" layoutY="237.0" mnemonicParsing="false" onAction="#btnLoginClick" prefHeight="25.0" prefWidth="227.0" text="Login" />
+            <TextField fx:id="usernameTextField" layoutX="223.0" layoutY="203.0" />
+            <Label layoutX="145.0" layoutY="207.0" text="Username" />
+            <Label layoutX="145.0" layoutY="265.0" text="Password" />
+            <PasswordField fx:id="passwordTextField" layoutX="223.0" layoutY="261.0" />
+            <Button fx:id="btnLogin" layoutX="145.0" layoutY="313.0" mnemonicParsing="false" onAction="#btnLoginClick" prefHeight="25.0" prefWidth="227.0" text="Login" />
+            <ImageView fx:id="imgViewLogin" fitHeight="150.0" fitWidth="200.0" layoutX="185.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="file:/C:/Users/Duane/IdeaProjects/Fire_Brigade/assets/img/Logo.png" />
+               </image>
+            </ImageView>
          </children>
       </Pane>
    </children>

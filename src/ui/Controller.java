@@ -1,6 +1,8 @@
 package ui;
 
 import controller.ChatClient;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,6 +14,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -22,9 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable{
@@ -38,6 +39,9 @@ public class Controller implements Initializable{
     private File file;
     private ByteBuffer buffer;
     private SocketHolder socketHolder;
+    private ObservableList<String> items;
+    private ObservableList<String> noteItems;
+    private String chatListener;
 
     @FXML
     private Button btnSend;
@@ -55,23 +59,48 @@ public class Controller implements Initializable{
     public ImageView imgLogo;
     @FXML
     public ToolBar toolBar;
+    @FXML
+    private MenuButton menuBtn;
+    @FXML
+    private MenuItem NotificationMenuBtn;
+    @FXML
+    private Button btnMap;
+    @FXML
+    private WebView webView;
+    private WebEngine webEngine;
+    TextArea textArea = new TextArea();
+    Label lblTopic = new Label("Topic");
+    Label lblNotification = new Label("Notification");
+    TextField textField = new TextField();
+    Button noteSubmit = new Button("Create Notification");
 
 
     public Controller() {
+
+        this.NotificationMenuBtn = new MenuItem();
+        this.menuBtn = new MenuButton();
+
         this.buffer = ByteBuffer.allocateDirect(1024);
         this.socketHolder = SocketHolder.getInstance();
 
         this.toolBar = new ToolBar();
         this.btnSend = new Button();
+        this.btnMap = new Button();
+
         this.chatTextInput = new TextField();
         this.chatWindow = new TextArea();
         this.chatMemberBox = new ListView<String>();
         this.chatMemberBox.setPrefSize(200, 250);
         this.chatMemberBox.setEditable(true);
-        ObservableList<String> items =FXCollections.observableArrayList ( "A", "B", "C", "D");
+        this.chatListener = "";
+
+        this.items = FXCollections.observableArrayList();
+        this.noteItems = FXCollections.observableArrayList();
 
         this.notificationList = new ListView<String>();
-        this.notificationList.setItems(items);
+        this.notificationList.setPrefSize(200, 250);
+        this.notificationList.setEditable(true);
+        this.notificationList.setItems(noteItems);
 
         this.chatMemberBox.setItems(items);
         this.lblUsername = new Label();
@@ -85,7 +114,6 @@ public class Controller implements Initializable{
     }
 
     private void parser(String s){
-        System.out.println("(Controller.java): -> Inside parser");
 
         String[] stringPeices = s.split(":", 2);
 
@@ -95,7 +123,7 @@ public class Controller implements Initializable{
 
         }
         else if(stringPeices[0].equals("Chat")){
-            this.chatWindow.appendText(stringPeices[1].trim());
+            this.chatWindow.appendText("Server -> " + stringPeices[1].trim());
         }
         else if(stringPeices[0].equals("Username")){
             System.out.println("(Controller.java): -> username " + stringPeices[1]);
@@ -103,13 +131,17 @@ public class Controller implements Initializable{
             //this.lblUsername.setText(user.getUsername());
             this.lblUsername.setText(this.user.getUsername());
         }
-//        else {
-//            System.out.println("(Controller.java): -> This did not work");
-//            System.out.println("(Controller.java): -> " + stringPeices[0]);
+        else if(stringPeices[0].equals("UserList")){
+            this.items.add(stringPeices[1]);
+        }
+        else if(stringPeices[0].equals("Notification")){
+            this.noteItems.add(stringPeices[1]);
+        }
+//        else if(stringPeices[0].equals("Messages")){
+//            this.chatWindow.appendText(chatListener + "-> " +stringPeices[1]);
 //        }
 
     }
-
 
     public void setMain(Main main){
         this.main = main;
@@ -155,11 +187,54 @@ public class Controller implements Initializable{
         return ans;
     }
 
+    public void mapBtnClick(ActionEvent actionEvent) {
+
+    }
+
     public void handleBtnSendClick(ActionEvent actionEvent) {
         //System.out.println(chatTextInput.getText());
-        this.request.out("Chat:" + chatTextInput.getText());
-        chatWindow.appendText("Me: -> " + chatTextInput.getText() + "\n");
+        this.request.out("Chat:" + chatListener + ":" + chatTextInput.getText());
+        chatWindow.appendText(this.user.getUsername() + "-> " + chatTextInput.getText() + "\n");
         chatTextInput.clear();
+    }
+
+    public void notificationBtnClick(ActionEvent actionEvent){
+
+        window = new Stage();
+
+        // Force user interaction with dialog box
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.setTitle("Create a Notification");
+        window.setMaxWidth(750);
+        window.setWidth(550);
+        window.setHeight(450);
+
+        noteSubmit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                ans = true;
+                String topic = textField.getText();
+                String content = textArea.getText();
+                String sqlStatement = "Notification:INSERT INTO fire_brigade.notification (content, category) VALUES('"+content+"', '"+topic+"')";
+                request.out(sqlStatement);
+                window.close();
+            }
+        });
+
+        VBox layout = new VBox(10);
+        textField.setMaxWidth(350);
+        textArea.setMaxWidth(350);
+
+        lblTopic.setAlignment(Pos.CENTER_LEFT);
+        lblNotification.setAlignment(Pos.CENTER_LEFT);
+
+        layout.getChildren().addAll(lblTopic, textField, lblNotification, textArea, noteSubmit);
+        layout.setAlignment(Pos.CENTER);
+
+        Scene scene = new Scene(layout);
+        window.setScene(scene);
+
+        window.showAndWait();
     }
 
     public void attachBtnClick(ActionEvent actionEvent) throws IOException {
@@ -182,7 +257,12 @@ public class Controller implements Initializable{
         System.out.println(file);
 
         File fileObj = new File(this.file.toString());
-        this.request.sendFile(fileObj);
+
+        if(fileObj != null){
+            this.request.sendFile(fileObj);
+            chatWindow.appendText("\n\nFile Sent: -> " + fileObj.getName().toString());
+        }
+
     }
 
     private void in(){
@@ -245,7 +325,21 @@ public class Controller implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("(Controller.java): Initialized");
-//        this.lblUsername.setText(this.user.getUsername());
+        this.chatMemberBox.setItems(items);
+        this.chatMemberBox.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        this.chatMemberBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                // Your action here
+                System.out.println("Selected item: ");
+                System.out.println("Selected item: " + newValue);
+                chatListener = newValue;
+                //request.out("Messages:" + chatListener);
+            }
+        });
+        this.notificationList.setItems(noteItems);
+        this.notificationList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     }
 
 }
