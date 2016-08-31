@@ -88,10 +88,10 @@ public class Controller implements Initializable{
         this.btnMap = new Button();
 
         this.chatTextInput = new TextField();
-        this.chatWindow = new TextArea();
         this.chatMemberBox = new ListView<String>();
         this.chatMemberBox.setPrefSize(200, 250);
         this.chatMemberBox.setEditable(true);
+        this.chatWindow = new TextArea();
         this.chatListener = "";
 
         this.items = FXCollections.observableArrayList();
@@ -137,9 +137,10 @@ public class Controller implements Initializable{
         else if(stringPeices[0].equals("Notification")){
             this.noteItems.add(stringPeices[1]);
         }
-//        else if(stringPeices[0].equals("Messages")){
-//            this.chatWindow.appendText(chatListener + "-> " +stringPeices[1]);
-//        }
+        else if(stringPeices[0].equals("Messages")){
+            //this.noteItems.add(stringPeices[1]);
+            this.chatThread(stringPeices[1]);
+        }
 
     }
 
@@ -187,12 +188,9 @@ public class Controller implements Initializable{
         return ans;
     }
 
-    public void mapBtnClick(ActionEvent actionEvent) {
-
-    }
+    public void mapBtnClick(ActionEvent actionEvent) {}
 
     public void handleBtnSendClick(ActionEvent actionEvent) {
-        //System.out.println(chatTextInput.getText());
         this.request.out("Chat:" + chatListener + ":" + chatTextInput.getText());
         chatWindow.appendText(this.user.getUsername() + "-> " + chatTextInput.getText() + "\n");
         chatTextInput.clear();
@@ -265,6 +263,14 @@ public class Controller implements Initializable{
 
     }
 
+    private void chatThread(String s) {
+        Thread t = new Thread(() -> {
+            //this.chatWindow = new TextArea();
+            this.chatWindow.appendText(s.trim());
+        });
+        t.start();
+    }
+
     private void in(){
         Thread t = new Thread(new Runnable() {
             @Override
@@ -279,7 +285,7 @@ public class Controller implements Initializable{
 
                         try {
                             amount_read = socketHolder.socketChannel.read(buffer);
-                            //buffer.clear();
+
                         } catch (Throwable t) { }
 
                         if(amount_read != -1){
@@ -316,10 +322,8 @@ public class Controller implements Initializable{
             }
 
         });
-
         t.setName("Server Listener");
         t.start();
-
     }
 
     @Override
@@ -337,6 +341,7 @@ public class Controller implements Initializable{
                 chatListener = newValue;
                 //request.out("Messages:" + chatListener);
             }
+
         });
         this.notificationList.setItems(noteItems);
         this.notificationList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
