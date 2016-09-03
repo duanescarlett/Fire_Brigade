@@ -1,6 +1,7 @@
 package ui;
 
 import controller.ChatClient;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -123,26 +124,60 @@ public class Controller implements Initializable{
 
         }
         else if(stringPeices[0].equals("Chat")){
-            this.chatWindow.appendText("Server -> " + stringPeices[1].trim());
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    chatWindow.appendText("Server -> " + stringPeices[1].trim());
+                }
+            });
+
+            System.out.println("(Controller,java): -> Chat " + stringPeices[1]);
         }
         else if(stringPeices[0].equals("Username")){
-            System.out.println("(Controller.java): -> username " + stringPeices[1]);
+            System.out.println("(Controller.java): -> Username " + stringPeices[1]);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    lblUsername.setText(user.getUsername());
+                }
+            });
+
             user.setUsername(stringPeices[1].trim());
             //this.lblUsername.setText(user.getUsername());
-            this.lblUsername.setText(this.user.getUsername());
         }
         else if(stringPeices[0].equals("UserList")){
-            this.items.add(stringPeices[1]);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    items.add(stringPeices[1]);
+                }
+            });
+
+            System.out.println("(Controller,java): -> UserList " + stringPeices[1]);
         }
         else if(stringPeices[0].equals("Notification")){
-            this.noteItems.add(stringPeices[1]);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    noteItems.add(stringPeices[1]);
+                }
+            });
+
+            System.out.println("(Controller,java): -> Notification " + stringPeices[1]);
         }
         else if(stringPeices[0].equals("Messages")){
-            //this.noteItems.add(stringPeices[1]);
-            this.chatThread(stringPeices[1]);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    chatThread(stringPeices[1]);
+                }
+            });
+            System.out.println("(Controller,java): -> Message " + stringPeices[1]);
+
         }
 
     }
+
 
     public void setMain(Main main){
         this.main = main;
