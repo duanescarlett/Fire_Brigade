@@ -75,7 +75,7 @@ public class Request {
 
     }
 
-    public String getServerResponse(){
+    public synchronized String getServerResponse(){
         return inComingFromServer;
     }
 
