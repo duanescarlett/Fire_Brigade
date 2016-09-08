@@ -6,6 +6,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -166,14 +167,8 @@ public class Controller implements Initializable{
             System.out.println("(Controller,java): -> Notification " + stringPeices[1]);
         }
         else if(stringPeices[0].equals("Messages")){
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    chatThread(stringPeices[1]);
-                }
-            });
+            chatThread(stringPeices[1]);
             System.out.println("(Controller,java): -> Message " + stringPeices[1]);
-
         }
 
     }
@@ -299,11 +294,28 @@ public class Controller implements Initializable{
     }
 
     private void chatThread(String s) {
-        Thread t = new Thread(() -> {
-            //this.chatWindow = new TextArea();
-            this.chatWindow.appendText(s.trim());
-        });
-        t.start();
+
+        Task task = new Task<Void>() {
+            @Override
+            public Void call() throws Exception {
+                int i = 0;
+                while (true) {
+                    final int finalI = i;
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            chatWindow.appendText(s.trim());
+                        }
+                    });
+                    i++;
+                    Thread.sleep(1000);
+                }
+            }
+        };
+
+        Thread th = new Thread(task);
+        th.setDaemon(true);
+        th.start();
     }
 
     private void in(){
@@ -380,6 +392,7 @@ public class Controller implements Initializable{
         });
         this.notificationList.setItems(noteItems);
         this.notificationList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
     }
 
 }
